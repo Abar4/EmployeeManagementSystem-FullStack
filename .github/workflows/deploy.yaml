@@ -3,7 +3,7 @@ name: Deploy Application
 on:
   push:
     branches:
-      - main  # change to your deployment branch if needed
+      - main 
 
 jobs:
   deploy:
@@ -22,19 +22,17 @@ jobs:
       - name: Start Dev Server
         run: npm run dev
 
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      # - name: Setup SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-      # - name: Deploy Application via SSH
-      #   run: |
-      #     ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-      #       cd ${{ secrets.APP_DIR }}
-      #       git pull origin main
-      #       npm install
-      #       pm2 restart app-name  # Replace with your process manager
-      #     EOF
+      - name: Deploy Application via SSH
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.APP_DIR }}
+            git pull origin main
+            npm install
+            pm2 restart app-name  
+          EOF
