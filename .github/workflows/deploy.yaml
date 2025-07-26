@@ -1,0 +1,38 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main  # change to your deployment branch if needed
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    container:
+      image: node:18
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          node-version: 18
+        run: npm ci
+        run: npm run dev
+
+
+      # - name: Setup SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      # - name: Deploy Application via SSH
+      #   run: |
+      #     ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+      #       cd ${{ secrets.APP_DIR }}
+      #       git pull origin main
+      #       npm install
+      #       pm2 restart app-name  # Replace with your process manager
+      #     EOF
