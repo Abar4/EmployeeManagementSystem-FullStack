@@ -19,17 +19,4 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy Application via SSH
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.APP_DIR }}
-            git pull origin main
-            npm install
-            pm2 restart app-name  
           EOF
