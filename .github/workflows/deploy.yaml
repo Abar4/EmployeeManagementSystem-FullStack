@@ -19,9 +19,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Start Dev Server
-        run: npm run dev
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
