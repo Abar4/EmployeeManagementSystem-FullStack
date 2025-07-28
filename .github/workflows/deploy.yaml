@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: node:20
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout Code
