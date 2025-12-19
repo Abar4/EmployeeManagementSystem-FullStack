@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start:metrics": "node server/metrics-server.js"
+    "start:metrics": "node pushMetrics.js"
   },
   "dependencies": {
     "axios": "^1.13.2",

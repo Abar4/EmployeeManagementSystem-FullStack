@@ -3,7 +3,7 @@ import client from 'prom-client';
 import axios from 'axios';
 
 // Use GitHub secrets for sensitive info
-const GRAFANA_URL = process.env.GRAFANA_URL; 
+const GRAFANA_URL = process.env.GRAFANA_PROM_URL; 
 const API_KEY = process.env.GRAFANA_API_KEY;
 
 // Collect default Node.js metrics
