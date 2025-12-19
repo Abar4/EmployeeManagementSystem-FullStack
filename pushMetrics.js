@@ -3,7 +3,7 @@ import client from 'prom-client';
 import axios from 'axios';
 
 // Use GitHub secrets for sensitive info
-const GRAFANA_URL = process.env.GRAFANA_PROM_URL; 
+const GRAFANA_URL = process.env.GRAFANA_PROM_URL;
 const API_KEY = process.env.GRAFANA_API_KEY;
 
 // Collect default Node.js metrics
@@ -23,8 +23,8 @@ async function pushMetrics() {
     console.log('Metrics pushed successfully!');
     console.log(res.data);
   } catch (err) {
-    console.error('Grafana API error:', err.response?.data || err.message);
-    process.exit(1);
+    console.error('Grafana API error (non-fatal):', err.response?.data || err.message);
+    // Do not exit with non-zero — allow CI to continue when Grafana is unreachable
   }
 }
 

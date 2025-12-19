@@ -24,6 +24,6 @@ jobs:
 
       - name: Push Node metrics to Grafana
         env:
-          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+          GRAFANA_URL: ${{ secrets.GRAFANA_PROM_URL }}
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
         run: node pushMetrics.js
