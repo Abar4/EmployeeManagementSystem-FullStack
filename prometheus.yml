@@ -10,7 +10,11 @@ alerting:
     - static_configs:
         - targets:
           # - alertmanager:9093
-
+remote_write:
+- url: https://prometheus-prod-43-prod-ap-south-1.grafana.net/api/prom/push
+  basic_auth:
+    username: 2860455
+    password: process.env.GRAFANA_API_KEY
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
   # - "first_rules.yml"
@@ -28,6 +32,7 @@ scrape_configs:
 
     static_configs:
       - targets: ["localhost:9090"]
+         - targets: ["localhost:9090", "localhost:3001"]
        # The label name is added as a label `label_name=<label_value>` to any timeseries scraped from this config.
         labels:
           app: "prometheus"
