@@ -1,0 +1,28 @@
+name: Frontend Metrics
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  send-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Push metrics to Grafana Cloud
+        run: node -e "require('./grafanaMetrics').pushMetrics()"
+        env:
+          GRAFANA_PROM_URL: ${{ secrets.GRAFANA_PROM_URL }}
+          GRAFANA_USERNAME: ${{ secrets.GRAFANA_USERNAME }}
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
