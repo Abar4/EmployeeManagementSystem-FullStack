@@ -1,37 +1,21 @@
-const client = require("prom-client");
-const axios = require("axios");
-
-/* --------------------
-   PROMETHEUS METRICS
--------------------- */
+import client from "prom-client";
+import axios from "axios";
 
 const register = new client.Registry();
-
-// collect default system metrics (cpu, memory, etc.)
 client.collectDefaultMetrics({ register });
 
-// custom metric example
 const pageLoadCounter = new client.Counter({
   name: "frontend_page_load_total",
-  help: "Total number of frontend page loads",
+  help: "Total frontend page loads",
 });
 
 register.registerMetric(pageLoadCounter);
 
-/* --------------------
-   METRIC UPDATE LOGIC
--------------------- */
-
-// call this whenever page loads or event occurs
-function recordPageLoad() {
+export function recordPageLoad() {
   pageLoadCounter.inc();
 }
 
-/* --------------------
-   PUSH TO GRAFANA CLOUD
--------------------- */
-
-async function pushMetrics() {
+export async function pushMetrics() {
   const metrics = await register.metrics();
 
   await axios.post(
@@ -50,13 +34,3 @@ async function pushMetrics() {
 
   console.log("✅ Metrics pushed to Grafana Cloud");
 }
-
-/* --------------------
-   EXPORTS
--------------------- */
-
-module.exports = {
-  recordPageLoad,
-  pushMetrics,
-  register,
-};

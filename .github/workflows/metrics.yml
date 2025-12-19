@@ -21,8 +21,9 @@ jobs:
         run: npm install
 
       - name: Push metrics to Grafana Cloud
-        run: node -e "require('./server/grafanaMetrics').pushMetrics()"
+        run: node pushMetrics.js
         env:
           GRAFANA_PROM_URL: ${{ secrets.GRAFANA_PROM_URL }}
           GRAFANA_USERNAME: ${{ secrets.GRAFANA_USERNAME }}
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+
