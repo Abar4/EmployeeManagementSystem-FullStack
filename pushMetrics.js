@@ -2,17 +2,15 @@
 import client from 'prom-client';
 import axios from 'axios';
 
-// Grafana / Prometheus Pushgateway settings
-const GRAFANA_URL = 'https://<YOUR_INSTANCE>.grafana.net/api/prom/push';
-const API_KEY = process.env.GRAFANA_API_KEY; // store as GitHub secret
+// Use GitHub secrets for sensitive info
+const GRAFANA_URL = process.env.GRAFANA_URL; 
+const API_KEY = process.env.GRAFANA_API_KEY;
 
 // Collect default Node.js metrics
 client.collectDefaultMetrics();
 
-// Push metrics to Grafana
 async function pushMetrics() {
   try {
-    // Get metrics as a string in Prometheus format
     const metrics = await client.register.metrics();
 
     const res = await axios.post(GRAFANA_URL, metrics, {

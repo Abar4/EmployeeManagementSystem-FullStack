@@ -1,27 +1,27 @@
-name: Frontend Metrics
+name: Push Node Metrics to Grafana
 
 on:
-  push:
-    branches: [ main ]
+  schedule:
+    - cron: '*/5 * * * *' # every 5 minutes
+  workflow_dispatch:
 
 jobs:
   send-metrics:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Push metrics to Grafana
+      - name: Push Node metrics to Grafana
         env:
+          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
         run: node pushMetrics.js
-
