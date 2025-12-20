@@ -1,29 +1,51 @@
-name: Push Node Metrics to Grafana
+name: Prometheus → Grafana Cloud
 
 on:
   push:
-    branches: [main] 
-  schedule:
-    - cron: '*/5 * * * *' # every 5 minutes
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  send-metrics:
+  metrics:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+    # 1️⃣ Start your app (example: Node.js)
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm install
 
-      - name: Push Node metrics to Grafana
-        env:
-          GRAFANA_URL: ${{ secrets.GRAFANA_PROM_URL }}
-          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
-        run: node pushMetrics.js
+    - name: Start app with metrics
+      run: |
+        npm run start &
+        sleep 10
+
+    # 2️⃣ Download Prometheus
+    - name: Download Prometheus
+      run: |
+        wget https://github.com/prometheus/prometheus/releases/download/v2.51.2/prometheus-2.51.2.linux-amd64.tar.gz
+        tar xvf prometheus-2.51.2.linux-amd64.tar.gz
+
+    # 3️⃣ Inject secrets into config
+    - name: Configure Prometheus
+      run: |
+        envsubst < prometheus.yml > prometheus-final.yml
+      env:
+        GRAFANA_PROM_USERNAME: ${{ secrets.GRAFANA_PROM_USERNAME }}
+        GRAFANA_PROM_API_KEY: ${{ secrets.GRAFANA_PROM_API_KEY }}
+
+    # 4️⃣ Run Prometheus
+    - name: Run Prometheus
+      run: |
+        ./prometheus-2.51.2.linux-amd64/prometheus \
+          --config.file=prometheus-final.yml \
+          --storage.tsdb.path=/tmp/prometheus \
+          --log.level=info &
+        sleep 60
